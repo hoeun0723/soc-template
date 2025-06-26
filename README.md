@@ -27,72 +27,25 @@
 
 3. 상태관리 로직을 변경
 
-- 컴포넌트마다 store를 둬서 관리하기
+- 컴포넌트마다 store를 둬서 관리하기, store와 컴포넌트는 서로를 모르게만들기
+- `getState()`: store의 전체 state나 필요한 state만 전달
+- `setState()`: 상태가 바뀌면 state를 변경하고 연결되어 있는 $element.render()실행
+- `element.prototype.conenctStore()`: store와 element를 연결, store.render에 element.render().bind(this)를 넣어서 setState가 일어날 대마다 `element.render()`를 실행
 
 4. 서버에서 오는 상태는 어떻게 처리할건지
 
+### ...진행중
+
+- store에 `requestDataToServer()`로 store가 init하자마자 실행해서 템플릿이 렌더링되기 전에 초기 값 세팅
+- 초기 렌더링이 아닌 이후 이벤트나 다른 함수에 의해 서버에 데이터를 요청할 경우 `setState()`를 실행
+
+
 5. 전역 상태는 어떻게 처리할건지
+
+- rootstore는 전역 상태의 store가 아님. 그냥 root와 같은 층에 있는 store요소일 뿐, 하위 요소에서 rootstore로 바로 접근할 수 없고, rootStore도 하위 요소로 상태를 바로 전달할 수 없다.
+
+6. 배열 길이만큼 자식을 렌더링할 때, 배열의 바뀐 요소만 반영해서 전체자식이 아닌 상태가 바뀐 자식만 리렌더링하고 싶음.
 
 # 원하는 흐름
 
 ![store](https://github.com/user-attachments/assets/4713d605-4ea7-4581-afa0-cfa843dde87e)
-
-
-# 템플릿 코드
-
-```js
-// core/Store.js
-export function Store($element) {
-  this.$element = $element;
-  this.state = {};
-  this.init();
-}
-
-Store.prototype.init = function () {
-  this.requestDataToServer();
-};
-
-Store.prototype.requestDataToServer = function () {};
-
-Store.prototype.getState = function (keys) {
-  if (!keys) return this.state;
-  return this.state;
-  // this.state에 있는 요소 중 key에 해당하는 요소들
-  // return {...요청한 state들};
-};
-Store.prototype.setState = function (newState) {
-  this.state = { ...this.state, ...newState };
-  console.log(newState);
-  this.$element.render();
-};
-
-// core/HtmlElement.js
-export function HtmlElement($element) {
-  this.$element = $element;
-  this.store;
-  this.state;
-}
-
-HtmlElement.prototype.init = function (store) {
-  this.store = store;
-  this.render();
-  this.setEvent();
-};
-
-HtmlElement.prototype.setTemplate = function () {
-  return ``;
-};
-
-HtmlElement.prototype.renderChild = function () {};
-
-HtmlElement.prototype.render = function () {
-  const args = this.store.getState();
-  this.state = {Add commentMore actions
-    ...args,
-  };
-  this.$element.innerHTML = this.setTemplate();
-  this.renderChild();
-};
-
-HtmlElement.prototype.setEvent = function () {};
-```

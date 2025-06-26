@@ -1,14 +1,16 @@
-export default function HtmlElement($element) {
+export default function HtmlElement({$element,isDirect}) {
   this.$element = $element;
   this.store;
-  this.state;
+  this.privateState;
 }
 
-HtmlElement.prototype.init = function (store) {
-  this.store = store;
+HtmlElement.prototype.init = function () {
+  this.connectStore();
   this.render();
   this.setEvent();
 };
+
+HtmlElement.prototype.connectStore = function () {};
 
 HtmlElement.prototype.setTemplate = function () {
   return ``;
@@ -17,10 +19,7 @@ HtmlElement.prototype.setTemplate = function () {
 HtmlElement.prototype.renderChild = function () {};
 
 HtmlElement.prototype.render = function () {
-  const args = this.store.getState();
-  this.state = {
-    ...args,
-  };
+    this.state = {};
   this.$element.innerHTML = this.setTemplate();
   this.renderChild();
 };

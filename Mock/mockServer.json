@@ -5,6 +5,11 @@
     "third": 0,
     "firth": 0
   },
-  "mockArr": [],
+  "mockArr": [
+    { "key": "first", "value": 0 },
+    { "key": "second", "value": 0 },
+    { "key": "third", "value": 0 },
+    { "key": "firth", "value": 0 }
+  ],
   "mockId": 123123
 }
