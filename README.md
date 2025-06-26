@@ -1,4 +1,4 @@
-# 관심사를 분리하자! Seprate of ConcernsAdd commentMore actions
+# 관심사의 분리 템플릿코드 Seprate of Concerns
 
 ### 아키텍처의 핵심
 
@@ -34,7 +34,7 @@
   > private varibale은 상속관계에서 쓸 수 없음., prototype으로 만든 클래스에서 private변수 사용하기
 - `getState()`: store의 전체 state나 필요한 state만 전달
 - `setState()`: 상태가 바뀌면 state를 변경하고 연결되어 있는 $element.render()실행
-- `connectInterface.js`Add commentMore actions
+- `connectInterface.js` 
   - connectStore(): store와 element를 연결
   - reRenderHtmlElement(): store.newState가 일어나면 변경된 state를 가지고 있는 htmlElement를 리렌더링
 
