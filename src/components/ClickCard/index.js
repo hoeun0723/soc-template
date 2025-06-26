@@ -1,4 +1,4 @@
-import HtmlElement from "../../Page/core/HtmlElement";
+import HtmlElement from "../../core/HtmlElement";
 import { setInheritance } from "../../utils/manuplateDom";
 
 export default function ClickCard({$element,isDirect,props}) {

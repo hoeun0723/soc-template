@@ -5,9 +5,9 @@ export function handleClick(event) {
         },
     } = event;
     if (!clickType) return;
-    const {mockArr} = this.store.state;
+    const {mockArr} = this.getState({mockArr: null});
     const newMockArr = increaseTargetValue(clickType,mockArr);
-    this.store.setState({mockArr:newMockArr});
+    this.setState({elementID : '$main',newState: {mockArr:newMockArr}});
 }
 
 function increaseTargetValue(clickType,mockArr) {

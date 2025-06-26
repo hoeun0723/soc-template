@@ -14,21 +14,21 @@ Main.prototype.connectStor = function () {
 };
 
 Main.prototype.setTemplate = function () {
-  const {
-    state : {mockArr},
-  } = this.store;
-  return mockArr.length === 0 ? `<div>Loading...</div>` : mockArr.map((clickObj)=> {
-    const $clickcard = new ClickCard({
-        $element : this.$element,
-        isDirect: true,
-        props: clickObj,
-    });
-    return $clickcard.setTemplate();
-  })
-  .join('');
+  const {mockArr} = this.getState({mockArr:null});
+ return mockArr.length === 0
+    ? `<div>Loading....</div>`
+    : mockArr
+        .map((clickObj) => {
+          const $clickcard = new ClickCard({
+            $element: this.$element,
+            isDirect: true,
+            props: clickObj,
+          });
+          return $clickcard.setTemplate();
+        })
+        .join('');
 };
 
 Main.prototype.setEvent = function () {
-  // debugger;
   this.$element.addEventListener('click', handleClick.bind(this));
 };

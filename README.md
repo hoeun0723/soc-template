@@ -27,24 +27,132 @@
 
 3. 상태관리 로직을 변경
 
+> store와 HtmlElement 분리!
+
 - 컴포넌트마다 store를 둬서 관리하기, store와 컴포넌트는 서로를 모르게만들기
+- HtmlElement에서는 store의 state에 직접 접근할 수 없게 하기 (private으로 관리하기)
+  > private varibale은 상속관계에서 쓸 수 없음., prototype으로 만든 클래스에서 private변수 사용하기
 - `getState()`: store의 전체 state나 필요한 state만 전달
 - `setState()`: 상태가 바뀌면 state를 변경하고 연결되어 있는 $element.render()실행
-- `element.prototype.conenctStore()`: store와 element를 연결, store.render에 element.render().bind(this)를 넣어서 setState가 일어날 대마다 `element.render()`를 실행
+- `connectInterface.js`Add commentMore actions
+  - connectStore(): store와 element를 연결
+  - reRenderHtmlElement(): store.newState가 일어나면 변경된 state를 가지고 있는 htmlElement를 리렌더링
 
-4. 서버에서 오는 상태는 어떻게 처리할건지
+## private하게 state관리
 
-### ...진행중
+### 이전
+
+- HtmlElement에서 직접 state를 변경하지 않지만, 접근은 여전히 가능함.
+- store도 HtmlElement처럼 상속받아서 사용
+
+```js
+// /core/Store.js
+export default function Store() {
+  this.state;
+  this.targeComponent = {};
+}
+
+Store.prototype.getState = function (keys) {
+  if (!keys) return this.state;
+  // 생략
+};
+
+Store.prototype.setState = function (newState) {
+  // 생략
+  this.state = { ...this.state, ...newState };
+};
+
+// pages/main/store.js
+function MainStore() {
+  Store.call(this);
+  this.state = {
+    clientState: '클라이언트에서만 쓰는 state',
+    mockArr: [],
+  };
+}
+const mainStore = new MainStore();
+// 생략
+export default mainStore;
+
+// pages/main/index.js
+Main.prototype.initStore = function () {
+  connectStore({ element: this, store: mainStore });
+};
+
+Main.prototype.setTemplate = function () {
+  const {
+    state: { mockArr },
+  } = this.store;
+  // 아래 코드로 개선하긴 함. 그래도 여전히 store.state로 state에 접근 가능
+  const { mockArr } = this.store.getState({ mockArr: null });
+  // 생략
+};
+```
+
+### 이후
+
+- HtmlElement에서 직접 state에 접근 불가능
+- 상속하지 않고 필요한 컴포넌트마다 인스턴스를 생성해서 사용
+
+```js
+// /core/Store.js
+export default function Store(props) {
+  let state = props;
+  this.getState = function (keys) {
+    if (!keys) return state;
+    // 생략
+  };
+
+  this.setState = function (newState) {
+    state = { ...state, ...newState };
+  };
+}
+
+// pages/main/store.js
+const mainState = {
+  clientState: '클라이언트에서만 쓰는 state',
+  mockArr: [],
+};
+
+const mainStore = new Store(mainState);
+// 생략
+export default mainStore;
+
+// pages/main/index.js
+Main.prototype.initStore = function () {
+  connectStore({ element: this, store: mainStore });
+};
+
+Main.prototype.setTemplate = function () {
+  const {
+    state: { mockArr },
+  } = this.store;
+  // 아래 코드로 개선하긴 함. 그래도 여전히 store.state로 state에 접근 가능
+  const { mockArr } = this.store.getState({ mockArr: null });
+  // 생략
+};
+```
+
+
+4. ConnectInterface만들기
+
+3번에서처럼 connectStore(), reRenderHtmlElement() 함수를 util처럼 사용하니가 이 로직을 store 혹은 HtmlElement에 선언해야함. 로직은 별도의 파일에 있지만 실행 자체는 의존하게 됨.
+
+=> 별도의 인터페이스(연결)객체를 만들어서 사용하자
+
+- store와 view는 서로를 모르게
+
+5. 서버에서 오는 상태는 어떻게 처리할거니
 
 - store에 `requestDataToServer()`로 store가 init하자마자 실행해서 템플릿이 렌더링되기 전에 초기 값 세팅
 - 초기 렌더링이 아닌 이후 이벤트나 다른 함수에 의해 서버에 데이터를 요청할 경우 `setState()`를 실행
 
 
-5. 전역 상태는 어떻게 처리할건지
+6. 전역 상태는 어떻게 처리할건지
 
 - rootstore는 전역 상태의 store가 아님. 그냥 root와 같은 층에 있는 store요소일 뿐, 하위 요소에서 rootstore로 바로 접근할 수 없고, rootStore도 하위 요소로 상태를 바로 전달할 수 없다.
 
-6. 배열 길이만큼 자식을 렌더링할 때, 배열의 바뀐 요소만 반영해서 전체자식이 아닌 상태가 바뀐 자식만 리렌더링하고 싶음.
+7. 배열 길이만큼 자식을 렌더링할 때, 배열의 바뀐 요소만 반영해서 전체자식이 아닌 상태가 바뀐 자식만 리렌더링하고 싶음.
 
 # 원하는 흐름
 
