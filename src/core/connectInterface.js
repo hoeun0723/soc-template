@@ -1,5 +1,5 @@
-export function ConnectInterface({elements,store}) {
-    this.elements = {...elements};
+export default function ConnectInterface({elements,store}) {
+    this.elements = elements;
     this.store = store;
 }
 
@@ -8,12 +8,16 @@ ConnectInterface.prototype.init = function () {
     Object.values(this.elements).map((element)=> element.init());
 };
 
+ConnectInterface.prototype.addElement = function ({newElements}) {
+    this.elements = {...this.elements, ...newElements};
+    this.connectStore();
+    Object.values(nenwElements).map((element)=>element.init());
+};
+
 ConnectInterface.prototype.connectStore = function () {
     Object.values(this.elements).map((element)=> {
-        element.getState = this.getStatefromStore.bind(this);
-        element.setState = this.setStateToStore.bind(this);
+        element.interface = this;
     });
-    this.store.interface = this;
 };
 
 ConnectInterface.prototype.getStatefromStore = function (keysObj) {
@@ -24,22 +28,19 @@ ConnectInterface.prototype.getStatefromStore = function (keysObj) {
     return this.store.getState(keysObj);
 };
 
-ConnectInterface.prototype.setStateToStore = function ({elementID,newState,}) {
+ConnectInterface.prototype.setStateToStore = function ({newState}) {
     const updatedState = this.store.setState(newState);
     this.reRenderHtmlElemenet({
-        targetHtmlElement : this.elements[elementID],
         newState: updatedState,
     });
 };
 
-ConnectInterface.prototype.reRenderHtmlElement = function ({
-    targetHtmlElement, newState,
-}) {
-    if (targetHtmlElement) {
+ConnectInterface.prototype.reRenderHtmlElement = function ({newState}) {
+    Object.values(this.elements).map((element)=>{
         Object.keys(newState).map((key)=> {
-            if(targetHtmlElement.getState().hasOwnProperty(key)) {
-                targetHtmlElement.render();
+             if (element.state.hasOwnProperty(key)) {
+                element.render();
             }
         });
-    }
+    });
 };

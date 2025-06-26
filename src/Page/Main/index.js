@@ -2,19 +2,22 @@ import ClickCard from '../../components/ClickCard/index.js';
 import HtmlElement from '../../core/HtmlElement.js';
 import { setInheritance } from '../../utils/manuplateDom.js';
 
-export default function Main({$element, isDirect}) {
-    HtmlElement.call(this, {$element,isDirect});
+export default function Main({$element}) {
+    HtmlElement.call(this, {$element});
 }
 
 setInheritance({parent:HtmlElement,child:Main});
 
-Main.prototype.connectStor = function () {
-    this.store = MainStore;
-    MainStore.render = this.render.bind(this);
+Main.prototype.beforeRender = function () {
+    this.store = {
+        ...this.interface.getStatefromStore({
+            mockArr:null,
+        }),
+    };
 };
 
 Main.prototype.setTemplate = function () {
-  const {mockArr} = this.getState({mockArr:null});
+  const {mockArr} = this.state;
  return mockArr.length === 0
     ? `<div>Loading....</div>`
     : mockArr

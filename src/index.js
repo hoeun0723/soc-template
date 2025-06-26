@@ -1,4 +1,4 @@
-import { ConnectInterface } from './core/connectInterface.js';
+import ConnectInterface from './core/connectInterface.js';
 import Root from './Page/root.js';
 
 const $rootWrapper = document.getElementById('root');

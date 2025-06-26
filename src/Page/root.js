@@ -1,3 +1,4 @@
+import { ConnectInterface } from '../core/connectInterface.js';
 import HtmlElement from '../core/HtmlElement.js';
 import Main from './Main/index.js';
 import mainStore from './Main/store.js';

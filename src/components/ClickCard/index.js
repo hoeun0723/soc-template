@@ -1,8 +1,8 @@
 import HtmlElement from "../../core/HtmlElement";
 import { setInheritance } from "../../utils/manuplateDom";
 
-export default function ClickCard({$element,isDirect,props}) {
-    HtmlElement.call(this, {$element,isDirect});
+export default function ClickCard({$element,props}) {
+    HtmlElement.call(this, {$element});
     this.state = {...props};
 }
 
