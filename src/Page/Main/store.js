@@ -1,5 +1,6 @@
 import { Store } from '../../core/Store.js';
 import { fetchData } from '../../utils/fetchData.js';
+import { setInheritance } from '../../utils/manuplateDom.js';
 
 export default function MainStore($element) {
   Store.call(this, $element);
@@ -8,8 +9,7 @@ export default function MainStore($element) {
   };
 }
 
-MainStore.prototype = Object.create(Store.prototype);
-MainStore.prototype.constructor = MainStore;
+setInheritance({parent: Store, child: MainStore});
 
 MainStore.prototype.requestDataToServer = async function () {
   const { mockObj } = await fetchData('/Mock/mockServer.json');
